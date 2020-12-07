@@ -1,5 +1,5 @@
-#ifndef _FIRESTORE_CONFIG_H_
-#define _FIRESTORE_CONFIG_H_
+#ifndef __FIRESTORE_CONFIG_H__
+#define __FIRESTORE_CONFIG_H__
 
 #define FIRESTORE_HOSTNAME                       "firestore.googleapis.com"
 #define FIRESTORE_HTTP_INTERNAL_TX_BUF_SIZE      1024
@@ -35,4 +35,5 @@
                            "IRdAvKLWZu/axBVbzYmqmwkm5zLSDW5nIAJbELCQCZwMH56t2Dvqofxs6BBcCFIZ\r\n" \
                            "USpxu6x6td0V7SvJCCosirSmIatj/9dSSVDQibet8q/7UK4v4ZUN80atnZz1yg==\r\n" \
                                              "-----END CERTIFICATE-----\r\n"
-#endif /* _FIRESTORE_CONFIG_H_ */
+
+#endif /* __FIRESTORE_CONFIG_H__ */
