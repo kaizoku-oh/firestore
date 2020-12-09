@@ -1,6 +1,8 @@
 #include "string.h"
 #include "esp_log.h"
+
 #include "firestore.h"
+#include "wifi_utils.h"
 
 #define TAG "MAIN"
 #define NEW_DOCUMENT_CONTENT "{"                                                  \
@@ -15,7 +17,7 @@
                                    "\"integerValue\": \"6\""                      \
                                  "},"                                             \
                                  "\"device_id\": {"                               \
-                                   "\"stringValue\": \"wrover-32\""               \
+                                   "\"stringValue\": \"esp-32-device\""           \
                                  "},"                                             \
                                  "\"connection_status\": {"                       \
                                    "\"stringValue\": \"connected\""               \
@@ -28,6 +30,7 @@ void get_collection(void)
 {
   char *pcCollection;
   uint32_t u32CollectionLen;
+
   if(FIRESTORE_OK == firestore_get_collection("devices", &pcCollection, &u32CollectionLen))
   {
     ESP_LOGI(TAG, "Collection length: %d", u32CollectionLen);
@@ -61,6 +64,7 @@ void update_document(void)
 {
   char tcDocument[320];
   uint32_t u32DocumentLen;
+
   memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
   if(FIRESTORE_OK == firestore_update_document("devices",
                                                "esp8266",
@@ -81,6 +85,7 @@ void add_document(void)
 {
   char tcDocument[320];
   uint32_t u32DocumentLen;
+
   memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
   if(FIRESTORE_OK == firestore_add_document("devices",
                                             "new_device_id",
@@ -111,6 +116,14 @@ void delete_document(void)
 
 void app_main()
 {
+  /* Block until connected to wifi */
+  wifi_initialise();
+  wifi_wait_connected();
+
   firestore_init();
   get_collection();
+  // get_document();
+  // update_document();
+  // add_document();
+  // delete_document();
 }
