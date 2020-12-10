@@ -54,3 +54,10 @@ dkms.conf
 # IDE
 .vscode
 .pio
+
+# User config files
+examples/pio-esp-idf/include/firestore_config.h
+examples/pio-esp-idf/include/wifi_config.h
+
+examples/pio-esp-arduino/include/firestore_config.h
+examples/pio-esp-arduino/include/wifi_config.h

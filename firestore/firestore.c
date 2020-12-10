@@ -1,15 +1,11 @@
 #include <string.h>
 #include "esp_log.h"
 #include "esp_http_client.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
 
 #include "firestore.h"
 #include "firestore_config.h"
 
 #define TAG                                      "FIRESTORE"
-#define HTTP_RECEIVED_BIT                        BIT0
-#define HTTP_FAIL_BIT                            BIT1
 
 esp_err_t _firestore_http_event_handler(esp_http_client_event_t *pstEvent);
 
@@ -21,8 +17,6 @@ typedef struct
   uint32_t u32HttpBodyLen;
   esp_http_client_handle_t pstHttpClient;
   esp_http_client_config_t stHttpconfig;
-  EventGroupHandle_t stHttpEventGroup;
-  EventBits_t u32EventBits;
 }firestore_ctx_t;
 
 static firestore_ctx_t stCtx;
@@ -33,7 +27,6 @@ firestore_err_t firestore_init(void)
   esp_log_level_set("FIRESTORE", ESP_LOG_NONE);
 #endif /* FIRESTORE_DEBUG */
   memset(&stCtx, 0x00, sizeof(stCtx));
-  stCtx.stHttpEventGroup = xEventGroupCreate();
   stCtx.stHttpconfig.host = FIRESTORE_HOSTNAME;
   stCtx.stHttpconfig.buffer_size = FIRESTORE_HTTP_INTERNAL_RX_BUF_SIZE;
   stCtx.stHttpconfig.buffer_size_tx = FIRESTORE_HTTP_INTERNAL_TX_BUF_SIZE;
@@ -68,33 +61,20 @@ firestore_err_t firestore_get_collection(char *pcCollectionId,
       stCtx.pstHttpClient = esp_http_client_init(&stCtx.stHttpconfig);
       if(ESP_OK == esp_http_client_perform(stCtx.pstHttpClient))
       {
-        stCtx.u32EventBits = xEventGroupWaitBits(stCtx.stHttpEventGroup,
-                                                 HTTP_RECEIVED_BIT | HTTP_FAIL_BIT,
-                                                 pdFALSE,
-                                                 pdFALSE,
-                                                 portMAX_DELAY);
-        if(stCtx.u32EventBits & HTTP_RECEIVED_BIT)
+        s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
+        ESP_LOGI(TAG,
+                 "HTTP code: %d, content_length: %d",
+                 s16HttpCode,
+                 esp_http_client_get_content_length(stCtx.pstHttpClient));
+        if(200 != s16HttpCode)
         {
-          s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
-          ESP_LOGI(TAG,
-                   "HTTP code: %d, content_length: %d",
-                   s16HttpCode,
-                   esp_http_client_get_content_length(stCtx.pstHttpClient));
-          if(200 != s16HttpCode)
-          {
-            ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
-            eRetVal = FIRESTORE_ERR_HTTP;
-          }
-          else
-          {
-            *ppcDocs = stCtx.tcHttpBody;
-            *pu32DocsLen = stCtx.u32HttpBodyLen;
-
-          }
-        }
-        else if(stCtx.u32EventBits & HTTP_FAIL_BIT)
-        {
+          ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
           eRetVal = FIRESTORE_ERR_HTTP;
+        }
+        else
+        {
+          *ppcDocs = stCtx.tcHttpBody;
+          *pu32DocsLen = stCtx.u32HttpBodyLen;
         }
       }
       else
@@ -111,7 +91,6 @@ firestore_err_t firestore_get_collection(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
-  vEventGroupDelete(stCtx.stHttpEventGroup);
   return eRetVal;
 }
 
@@ -142,32 +121,20 @@ firestore_err_t firestore_get_document(char *pcCollectionId,
       stCtx.pstHttpClient = esp_http_client_init(&stCtx.stHttpconfig);
       if(ESP_OK == esp_http_client_perform(stCtx.pstHttpClient))
       {
-        stCtx.u32EventBits = xEventGroupWaitBits(stCtx.stHttpEventGroup,
-                                                 HTTP_RECEIVED_BIT | HTTP_FAIL_BIT,
-                                                 pdFALSE,
-                                                 pdFALSE,
-                                                 portMAX_DELAY);
-        if(stCtx.u32EventBits & HTTP_RECEIVED_BIT)
+        s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
+        ESP_LOGI(TAG,
+                 "HTTP code: %d, content_length: %d",
+                 s16HttpCode,
+                 esp_http_client_get_content_length(stCtx.pstHttpClient));
+        if(200 != s16HttpCode)
         {
-          s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
-          ESP_LOGI(TAG,
-                   "HTTP code: %d, content_length: %d",
-                   s16HttpCode,
-                   esp_http_client_get_content_length(stCtx.pstHttpClient));
-          if(200 != s16HttpCode)
-          {
-            ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
-            eRetVal = FIRESTORE_ERR_HTTP;
-          }
-          else
-          {
-            *ppcDocument = stCtx.tcHttpBody;
-            *pu32DocumentLen = stCtx.u32HttpBodyLen;
-          }
-        }
-        else if(stCtx.u32EventBits & HTTP_FAIL_BIT)
-        {
+          ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
           eRetVal = FIRESTORE_ERR_HTTP;
+        }
+        else
+        {
+          *ppcDocument = stCtx.tcHttpBody;
+          *pu32DocumentLen = stCtx.u32HttpBodyLen;
         }
       }
       else
@@ -184,7 +151,6 @@ firestore_err_t firestore_get_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
-  vEventGroupDelete(stCtx.stHttpEventGroup);
   return eRetVal;
 }
 
@@ -217,32 +183,20 @@ firestore_err_t firestore_add_document(char *pcCollectionId,
       esp_http_client_set_post_field(stCtx.pstHttpClient, pcDocument, strlen(pcDocument));
       if(ESP_OK == esp_http_client_perform(stCtx.pstHttpClient))
       {
-        stCtx.u32EventBits = xEventGroupWaitBits(stCtx.stHttpEventGroup,
-                                                 HTTP_RECEIVED_BIT | HTTP_FAIL_BIT,
-                                                 pdFALSE,
-                                                 pdFALSE,
-                                                 portMAX_DELAY);
-        if(stCtx.u32EventBits & HTTP_RECEIVED_BIT)
+        s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
+        ESP_LOGI(TAG,
+                 "HTTP PATCH Status = %d, content_length = %d",
+                 esp_http_client_get_status_code(stCtx.pstHttpClient),
+                 esp_http_client_get_content_length(stCtx.pstHttpClient));
+        if(200 != s16HttpCode)
         {
-          s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
-          ESP_LOGI(TAG,
-                   "HTTP PATCH Status = %d, content_length = %d",
-                   esp_http_client_get_status_code(stCtx.pstHttpClient),
-                   esp_http_client_get_content_length(stCtx.pstHttpClient));
-          if(200 != s16HttpCode)
-          {
-            ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
-            eRetVal = FIRESTORE_ERR_HTTP;
-          }
-          else
-          {
-            pcDocument = stCtx.tcHttpBody;
-            *pu32DocumentLen = stCtx.u32HttpBodyLen;
-          }
-        }
-        else if(stCtx.u32EventBits & HTTP_FAIL_BIT)
-        {
+          ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
           eRetVal = FIRESTORE_ERR_HTTP;
+        }
+        else
+        {
+          pcDocument = stCtx.tcHttpBody;
+          *pu32DocumentLen = stCtx.u32HttpBodyLen;
         }
       }
       else
@@ -259,7 +213,6 @@ firestore_err_t firestore_add_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
-  vEventGroupDelete(stCtx.stHttpEventGroup);
   return eRetVal;
 }
 
@@ -292,32 +245,20 @@ firestore_err_t firestore_update_document(char *pcCollectionId,
       esp_http_client_set_post_field(stCtx.pstHttpClient, pcDocument, strlen(pcDocument));
       if(ESP_OK == esp_http_client_perform(stCtx.pstHttpClient))
       {
-        stCtx.u32EventBits = xEventGroupWaitBits(stCtx.stHttpEventGroup,
-                                                 HTTP_RECEIVED_BIT | HTTP_FAIL_BIT,
-                                                 pdFALSE,
-                                                 pdFALSE,
-                                                 portMAX_DELAY);
-        if(stCtx.u32EventBits & HTTP_RECEIVED_BIT)
+        s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
+        ESP_LOGI(TAG,
+                 "HTTP PATCH Status = %d, content_length = %d",
+                 esp_http_client_get_status_code(stCtx.pstHttpClient),
+                 esp_http_client_get_content_length(stCtx.pstHttpClient));
+        if(200 != s16HttpCode)
         {
-          s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
-          ESP_LOGI(TAG,
-                   "HTTP PATCH Status = %d, content_length = %d",
-                   esp_http_client_get_status_code(stCtx.pstHttpClient),
-                   esp_http_client_get_content_length(stCtx.pstHttpClient));
-          if(200 != s16HttpCode)
-          {
-            ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
-            eRetVal = FIRESTORE_ERR_HTTP;
-          }
-          else
-          {
-            pcDocument = stCtx.tcHttpBody;
-            *pu32DocumentLen = stCtx.u32HttpBodyLen;
-          }
-        }
-        else if(stCtx.u32EventBits & HTTP_FAIL_BIT)
-        {
+          ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
           eRetVal = FIRESTORE_ERR_HTTP;
+        }
+        else
+        {
+          pcDocument = stCtx.tcHttpBody;
+          *pu32DocumentLen = stCtx.u32HttpBodyLen;
         }
       }
       else
@@ -334,7 +275,6 @@ firestore_err_t firestore_update_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
-  vEventGroupDelete(stCtx.stHttpEventGroup);
   return eRetVal;
 }
 
@@ -362,31 +302,19 @@ firestore_err_t firestore_delete_document(char *pcCollectionId, char *pcDocument
       esp_http_client_set_method(stCtx.pstHttpClient, HTTP_METHOD_DELETE);
       if(ESP_OK == esp_http_client_perform(stCtx.pstHttpClient))
       {
-        stCtx.u32EventBits = xEventGroupWaitBits(stCtx.stHttpEventGroup,
-                                                 HTTP_RECEIVED_BIT | HTTP_FAIL_BIT,
-                                                 pdFALSE,
-                                                 pdFALSE,
-                                                 portMAX_DELAY);
-        if(stCtx.u32EventBits & HTTP_RECEIVED_BIT)
+        s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
+        ESP_LOGI(TAG,
+                 "HTTP code: %d, content_length: %d",
+                 s16HttpCode,
+                 esp_http_client_get_content_length(stCtx.pstHttpClient));
+        if(200 != s16HttpCode)
         {
-          s16HttpCode = esp_http_client_get_status_code(stCtx.pstHttpClient);
-          ESP_LOGI(TAG,
-                   "HTTP code: %d, content_length: %d",
-                   s16HttpCode,
-                   esp_http_client_get_content_length(stCtx.pstHttpClient));
-          if(200 != s16HttpCode)
-          {
-            ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
-            eRetVal = FIRESTORE_ERR_HTTP;
-          }
-          else
-          {
-            ESP_LOGI(TAG, "Document deleted successfully");
-          }
-        }
-        else if(stCtx.u32EventBits & HTTP_FAIL_BIT)
-        {
+          ESP_LOGE(TAG, "Firestore REST API call failed with HTTP code: %d", s16HttpCode);
           eRetVal = FIRESTORE_ERR_HTTP;
+        }
+        else
+        {
+          ESP_LOGI(TAG, "Document deleted successfully");
         }
       }
       else
@@ -403,7 +331,6 @@ firestore_err_t firestore_delete_document(char *pcCollectionId, char *pcDocument
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
-  vEventGroupDelete(stCtx.stHttpEventGroup);
   return eRetVal;
 }
 
@@ -416,7 +343,6 @@ esp_err_t _firestore_http_event_handler(esp_http_client_event_t *pstEvent)
   {
   case HTTP_EVENT_ERROR:
     ESP_LOGI(TAG, "HTTP error");
-    xEventGroupSetBits(stCtx.stHttpEventGroup, HTTP_FAIL_BIT);
     break;
   case HTTP_EVENT_ON_CONNECTED:
     ESP_LOGI(TAG, "HTTP connected to server");
@@ -440,7 +366,6 @@ esp_err_t _firestore_http_event_handler(esp_http_client_event_t *pstEvent)
     break;
   case HTTP_EVENT_ON_FINISH:
     ESP_LOGI(TAG, "HTTP session is finished");
-    xEventGroupSetBits(stCtx.stHttpEventGroup, HTTP_RECEIVED_BIT);
     break;
   case HTTP_EVENT_DISCONNECTED:
     ESP_LOGI(TAG, "HTTP connection is closed");
