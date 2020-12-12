@@ -55,6 +55,7 @@ const firebaseConfig = {
 * Add doxygene comments
 * Add anonymous authentication
 * Add CI/CD
+* Add thread safety
 
 ## Authors
 
