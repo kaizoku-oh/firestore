@@ -12,19 +12,7 @@ To use this component you need ESP-IDF installed on your machine, see espressif 
 
 ### Configuring the examples
 
-#### pio-esp-idf
-This is an example made with PlatformIO that includes the firestore component by using EXTRA_COMPONENT_DIRS option in the root CMakeLists.txt file. This option represents a list of extra directories to search for components in the project.
-
-The example contains 2 config files that we need to change in order for it to work correctly.
-
-First wifi_config.h, this file need to contain your  wifi ssid and password:
-
-``` C
-#define WIFI_SSID "PUT_YOUR_WIFI_SSID_HERE"
-#define WIFI_PASS "PUT_YOUR_WIFI_PASS_HERE"
-```
-
-The second config file is firestore_config.h which needs to contain your firestore component configuration, feel free to change these configs, but the most important ones are the following:
+Before using the example code you need to configure the firestore component in firestore_config.h which needs to contain your firestore component configuration like project id, api key... Feel free to change th configs, but the most important ones are the following:
 
 ``` C
 #define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
