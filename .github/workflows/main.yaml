@@ -1,0 +1,19 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Clone repo with its submodules
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
