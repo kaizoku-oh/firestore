@@ -17,3 +17,26 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+
+    # Install python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
+    # Install PlatformIO
+    - name: Set up platformio
+      run: |
+        cd examples/firestore-crud
+        python -m pip install --upgrade pip
+        pip install platformio
+
+    # Build the firmware
+    - name: Build Firmware
+      run: |
+        cd examples/firestore-crud
+        pio run
+
+    # Check the firmware
+    - name: Check Firmware
+      run: |
+        cd examples/firestore-crud
+        pio check
