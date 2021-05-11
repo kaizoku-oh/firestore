@@ -2,6 +2,16 @@
 
 This project is an esp-idf component for Cloud Firestore NoSQL database as a service.
 
+<!-- ![Firestore logo](https://github.com/kaizoku-oh/firestore/blob/main/docs/image/logo.png) -->
+<!-- ![](https://github.com/<OWNER>/<REPOSITORY>/workflows/<WORKFLOW_NAME>/badge.svg) -->
+[![GitHub Build workflow status](https://github.com/kaizoku-oh/firestore/workflows/Build/badge.svg)](https://github.com/kaizoku-oh/firestore/actions/workflows/main.yaml)
+[![GitHub release](https://img.shields.io/github/v/release/kaizoku-oh/firestore)](https://github.com/kaizoku-oh/firestore/releases)
+![dependencies Status](https://status.david-dm.org/gh/dwyl/esta.svg)
+[![GitHub issues](https://img.shields.io/github/issues/kaizoku-oh/firestore)](https://github.com/kaizoku-oh/firestore/issues)
+![GitHub top language](https://img.shields.io/github/languages/top/kaizoku-oh/firestore)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/kaizoku-oh/firestore/blob/main/LICENSE)
+[![Twitter follow](https://img.shields.io/twitter/follow/kaizoku_ouh?style=social)](https://twitter.com/kaizoku_ouh)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
