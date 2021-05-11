@@ -24,6 +24,8 @@ $ code firestore/examples/firestore-crud
 
 5. Now you should be ready to go: Build, upload and monitor
 
-6. Open your [firebase console](https://console.firebase.google.com/) and go to the firestore section, you'll find there a new collection and a document created.
+6. Open your [firebase console](https://console.firebase.google.com/) and go to the firestore section, you'll find that there is a new collection and a document created.
 
 ![Firestore screenshot](https://raw.githubusercontent.com/kaizoku-oh/firestore/example-update/docs/images/firestore.png)
+
+*Finally try to play around with the code and experiment all the CRUD functionalities.*
