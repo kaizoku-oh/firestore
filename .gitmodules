@@ -1,0 +1,3 @@
+[submodule "examples/firestore-crud/components/firestore"]
+	path = examples/firestore-crud/components/firestore
+	url = https://github.com/kaizoku-oh/firestore.git

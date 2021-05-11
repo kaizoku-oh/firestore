@@ -35,7 +35,18 @@ $ git clone https://github.com/kaizoku-oh/firestore.git
 #define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
 #define FIRESTORE_FIREBASE_API_KEY "PUT_YOUR_FIREBASE_API_KEY_HERE"
 ```
-##### Finally you prject directory tree should look similar like the following:
+7. Add the following build flags in your **platformio.ini** file and change WIFI_SSID and WIFI_PASS values by your own WiFi SSID and password respectively:
+``` INI
+build_flags =
+  ; Add include directory to compiler path
+  '-Iinclude'
+  ; WiFi SSID defined in compile time
+  '-DWIFI_SSID="TYPE_YOUR_WIFI_SSID_HERE"'
+  ; WiFi password defined in compile time
+  '-DWIFI_PASS="TYPE_YOUR_WIFI_PASSWORD_HERE"'
+```
+
+##### Finally you project directory tree should look similar like the following:
 ```
 my-project/
 ├── CMakeLists.txt
@@ -72,7 +83,7 @@ const firebaseConfig = {
 ## TODO
 
 * Optimize the http code
-* Add doxygene comments
+* Add doxygen comments
 * Add anonymous authentication
 * Add CI/CD
 * Add thread safety
