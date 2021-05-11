@@ -1,29 +1,29 @@
-#include "string.h"
-#include "esp_log.h"
+#include <string.h>
+#include <esp_log.h>
 
 #include "firestore.h"
 #include "wifi_utils.h"
 
-#define TAG "MAIN"
-#define NEW_DOCUMENT_CONTENT "{"                                                  \
-                               "\"fields\": {"                                    \
-                                   "\"last_seen_connected\": {"                   \
-                                   "\"timestampValue\": \"2021-11-13T20:44:30Z\"" \
-                                 "},"                                             \
-                                 "\"firmware_version\": {"                        \
-                                   "\"stringValue\": \"v2.0.0\""                  \
-                                 "},"                                             \
-                                 "\"send_frequency\": {"                          \
-                                   "\"integerValue\": \"6\""                      \
-                                 "},"                                             \
-                                 "\"device_id\": {"                               \
-                                   "\"stringValue\": \"esp-32-device\""           \
-                                 "},"                                             \
-                                 "\"connection_status\": {"                       \
-                                   "\"stringValue\": \"connected\""               \
-                                 "}"                                              \
-                               "}"                                                \
-                             "}"
+#define TAG                                      "MAIN"
+#define NEW_DOCUMENT_CONTENT                     "{"                                                  \
+                                                   "\"fields\": {"                                    \
+                                                       "\"last_seen_connected\": {"                   \
+                                                       "\"timestampValue\": \"2021-11-13T20:44:30Z\"" \
+                                                     "},"                                             \
+                                                     "\"firmware_version\": {"                        \
+                                                       "\"stringValue\": \"v2.0.0\""                  \
+                                                     "},"                                             \
+                                                     "\"send_frequency\": {"                          \
+                                                       "\"integerValue\": \"6\""                      \
+                                                     "},"                                             \
+                                                     "\"device_id\": {"                               \
+                                                       "\"stringValue\": \"esp-32-device\""           \
+                                                     "},"                                             \
+                                                     "\"connection_status\": {"                       \
+                                                       "\"stringValue\": \"connected\""               \
+                                                     "}"                                              \
+                                                   "}"                                                \
+                                                 "}"
 
 /* Get Collection */
 void get_collection(void)
@@ -48,7 +48,7 @@ void get_document(void)
   char *pcDocument;
   uint32_t u32DocumentLen;
 
-  if(FIRESTORE_OK == firestore_get_document("devices", "esp32", &pcDocument, &u32DocumentLen))
+  if(FIRESTORE_OK == firestore_get_document("devices", "new_device_id", &pcDocument, &u32DocumentLen))
   {
     ESP_LOGI(TAG, "Document length: %d", u32DocumentLen);
     ESP_LOGI(TAG, "Document content:\r\n%.*s", u32DocumentLen, pcDocument);
@@ -67,7 +67,7 @@ void update_document(void)
 
   memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
   if(FIRESTORE_OK == firestore_update_document("devices",
-                                               "esp8266",
+                                               "new_device_id",
                                                tcDocument,
                                                &u32DocumentLen))
   {
@@ -116,14 +116,14 @@ void delete_document(void)
 
 void app_main()
 {
-  /* Block until connected to wifi */
+  /* Block until connected to WiFi */
   wifi_initialise();
   wifi_wait_connected();
 
   firestore_init();
-  get_collection();
+  add_document();
   // get_document();
+  // get_collection();
   // update_document();
-  // add_document();
   // delete_document();
 }

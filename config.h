@@ -1,13 +1,37 @@
-#ifndef __FIRESTORE_CONFIG_H__
-#define __FIRESTORE_CONFIG_H__
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
+#include "firestore_config.h"
+
+#ifndef FIRESTORE_HOSTNAME
 #define FIRESTORE_HOSTNAME                       "firestore.googleapis.com"
+#endif /* FIRESTORE_HOSTNAME */
+
+#ifndef FIRESTORE_HTTP_INTERNAL_TX_BUF_SIZE
 #define FIRESTORE_HTTP_INTERNAL_TX_BUF_SIZE      1024
+#endif /* FIRESTORE_HTTP_INTERNAL_TX_BUF_SIZE */
+
+#ifndef FIRESTORE_HTTP_INTERNAL_RX_BUF_SIZE
 #define FIRESTORE_HTTP_INTERNAL_RX_BUF_SIZE      1024
+#endif /* FIRESTORE_HTTP_INTERNAL_RX_BUF_SIZE */
+
+#ifndef FIRESTORE_HTTP_RX_BUF_SIZE
 #define FIRESTORE_HTTP_RX_BUF_SIZE               1024*2
+#endif /* FIRESTORE_HTTP_RX_BUF_SIZE */
+
+#ifndef FIRESTORE_HTTP_PATH_SIZE
 #define FIRESTORE_HTTP_PATH_SIZE                 256
+#endif /* FIRESTORE_HTTP_PATH_SIZE */
+
+#ifndef FIRESTORE_FIREBASE_PROJECT_ID
 #define FIRESTORE_FIREBASE_PROJECT_ID            "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
+#endif /* FIRESTORE_FIREBASE_PROJECT_ID */
+
+#ifndef FIRESTORE_FIREBASE_API_KEY
 #define FIRESTORE_FIREBASE_API_KEY               "PUT_YOUR_FIREBASE_API_KEY_HERE"
+#endif /* FIRESTORE_FIREBASE_API_KEY */
+
+#ifndef FIRESTORE_FIREBASE_CA_CERT_PEM
 /* openssl s_client -showcerts -verify 5 -connect edgecert.googleapis.com:443 < /dev/null */
 #define FIRESTORE_FIREBASE_CA_CERT_PEM                                                            \
                                              "-----BEGIN CERTIFICATE-----\r\n"                    \
@@ -35,5 +59,6 @@
                            "IRdAvKLWZu/axBVbzYmqmwkm5zLSDW5nIAJbELCQCZwMH56t2Dvqofxs6BBcCFIZ\r\n" \
                            "USpxu6x6td0V7SvJCCosirSmIatj/9dSSVDQibet8q/7UK4v4ZUN80atnZz1yg==\r\n" \
                                              "-----END CERTIFICATE-----\r\n"
+#endif /* FIRESTORE_FIREBASE_CA_CERT_PEM */
 
-#endif /* __FIRESTORE_CONFIG_H__ */
+#endif /* __CONFIG_H__ */

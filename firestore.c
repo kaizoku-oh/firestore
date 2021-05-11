@@ -3,7 +3,7 @@
 #include "esp_http_client.h"
 
 #include "firestore.h"
-#include "firestore_config.h"
+#include "config.h"
 
 #define TAG                                      "FIRESTORE"
 
