@@ -19,9 +19,20 @@ These instructions will get you a copy of the project up and running on your loc
 
 To use this component you need ESP-IDF installed on your machine, see espressif [getting started guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) on how to do that natively or you can simply use [PlatformIO](https://docs.platformio.org/en/latest/tutorials/espressif32/espidf_debugging_unit_testing_analysis.html).
 
-### Configuring the examples
+### How to use this component with PlatformIO:
 
-Before using the example code you need to configure the firestore component in firestore_config.h which needs to contain your firestore component configuration like project id, api key... Feel free to change th configs, but the most important ones are the following:
+1. Install [PlatformIO Extension for vscode](https://platformio.org/install/ide?install=vscode)
+2. Create a new project using ESP-IDF framework
+3. Under the root of the project create a new directory called [components](https://docs.platformio.org/en/latest/frameworks/espidf.html#esp-idf-components)
+4. Clone this repo under the components directory
+``` bash
+$ cd components
+$ git clone https://github.com/kaizoku-oh/firestore.git
+```
+5. Under your project include directory create a new file called firestore_config.h
+6. Add your Firebase project ID and API key in the firestore_config.h file
+
+Before using the example code you need to configure the firestore component in firestore_config.h which needs to contain your firestore component configuration like project id, api key... Feel free to change the other configs, but the most important ones are the following:
 
 ``` C
 #define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
