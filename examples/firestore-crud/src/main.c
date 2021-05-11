@@ -1,29 +1,29 @@
-#include "string.h"
-#include "esp_log.h"
+#include <string.h>
+#include <esp_log.h>
 
 #include "firestore.h"
 #include "wifi_utils.h"
 
-#define TAG "MAIN"
-#define NEW_DOCUMENT_CONTENT "{"                                                  \
-                               "\"fields\": {"                                    \
-                                   "\"last_seen_connected\": {"                   \
-                                   "\"timestampValue\": \"2021-11-13T20:44:30Z\"" \
-                                 "},"                                             \
-                                 "\"firmware_version\": {"                        \
-                                   "\"stringValue\": \"v2.0.0\""                  \
-                                 "},"                                             \
-                                 "\"send_frequency\": {"                          \
-                                   "\"integerValue\": \"6\""                      \
-                                 "},"                                             \
-                                 "\"device_id\": {"                               \
-                                   "\"stringValue\": \"esp-32-device\""           \
-                                 "},"                                             \
-                                 "\"connection_status\": {"                       \
-                                   "\"stringValue\": \"connected\""               \
-                                 "}"                                              \
-                               "}"                                                \
-                             "}"
+#define TAG                                      "MAIN"
+#define NEW_DOCUMENT_CONTENT                     "{"                                                  \
+                                                   "\"fields\": {"                                    \
+                                                       "\"last_seen_connected\": {"                   \
+                                                       "\"timestampValue\": \"2021-11-13T20:44:30Z\"" \
+                                                     "},"                                             \
+                                                     "\"firmware_version\": {"                        \
+                                                       "\"stringValue\": \"v2.0.0\""                  \
+                                                     "},"                                             \
+                                                     "\"send_frequency\": {"                          \
+                                                       "\"integerValue\": \"6\""                      \
+                                                     "},"                                             \
+                                                     "\"device_id\": {"                               \
+                                                       "\"stringValue\": \"esp-32-device\""           \
+                                                     "},"                                             \
+                                                     "\"connection_status\": {"                       \
+                                                       "\"stringValue\": \"connected\""               \
+                                                     "}"                                              \
+                                                   "}"                                                \
+                                                 "}"
 
 /* Get Collection */
 void get_collection(void)
@@ -116,7 +116,7 @@ void delete_document(void)
 
 void app_main()
 {
-  /* Block until connected to wifi */
+  /* Block until connected to WiFi */
   wifi_initialise();
   wifi_wait_connected();
 
