@@ -21,21 +21,21 @@ To use this component you need ESP-IDF installed on your machine, see espressif 
 
 ### How to use this component with PlatformIO:
 
-1. #### Install [PlatformIO Extension for vscode](https://platformio.org/install/ide?install=vscode)
-2. #### Create a new project using ESP-IDF framework
-3. #### Under the root of the project create a new directory called [components](https://docs.platformio.org/en/latest/frameworks/espidf.html#esp-idf-components)
-4. #### Clone this repo under the components directory
+1. Install [PlatformIO Extension for vscode](https://platformio.org/install/ide?install=vscode)
+2. Create a new project using ESP-IDF framework
+3. Under the root of the project create a new directory called [components](https://docs.platformio.org/en/latest/frameworks/espidf.html#esp-idf-components)
+4. Clone this repo under the **components** directory
 ``` bash
 $ cd components
 $ git clone https://github.com/kaizoku-oh/firestore.git
 ```
-5. #### Under your project include directory create a new file called firestore_config.h
-6. #### Add your Firebase project ID and API key in the firestore_config.h file like the following:
+5. Under your project include directory create a new file called **firestore_config.h**
+6. Add your Firebase project ID and API key in the **firestore_config.h** file like the following:
 ``` C
 #define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
 #define FIRESTORE_FIREBASE_API_KEY "PUT_YOUR_FIREBASE_API_KEY_HERE"
 ```
-Finally you prject directory tree should look similar like the following:
+##### Finally you prject directory tree should look similar like the following:
 ```
 my-project/
 ├── CMakeLists.txt
