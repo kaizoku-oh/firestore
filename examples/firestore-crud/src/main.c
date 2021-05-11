@@ -48,7 +48,7 @@ void get_document(void)
   char *pcDocument;
   uint32_t u32DocumentLen;
 
-  if(FIRESTORE_OK == firestore_get_document("devices", "esp32", &pcDocument, &u32DocumentLen))
+  if(FIRESTORE_OK == firestore_get_document("devices", "new_device_id", &pcDocument, &u32DocumentLen))
   {
     ESP_LOGI(TAG, "Document length: %d", u32DocumentLen);
     ESP_LOGI(TAG, "Document content:\r\n%.*s", u32DocumentLen, pcDocument);
@@ -67,7 +67,7 @@ void update_document(void)
 
   memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
   if(FIRESTORE_OK == firestore_update_document("devices",
-                                               "esp8266",
+                                               "new_device_id",
                                                tcDocument,
                                                &u32DocumentLen))
   {
@@ -121,9 +121,9 @@ void app_main()
   wifi_wait_connected();
 
   firestore_init();
-  get_collection();
+  add_document();
   // get_document();
+  // get_collection();
   // update_document();
-  // add_document();
   // delete_document();
 }
