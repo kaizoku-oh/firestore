@@ -6,7 +6,6 @@ This project is an esp-idf component for Cloud Firestore NoSQL database as a ser
 <!-- ![](https://github.com/<OWNER>/<REPOSITORY>/workflows/<WORKFLOW_NAME>/badge.svg) -->
 [![GitHub Build workflow status](https://github.com/kaizoku-oh/firestore/workflows/Build/badge.svg)](https://github.com/kaizoku-oh/firestore/actions/workflows/main.yaml)
 [![GitHub release](https://img.shields.io/github/v/release/kaizoku-oh/firestore)](https://github.com/kaizoku-oh/firestore/releases)
-![dependencies Status](https://status.david-dm.org/gh/dwyl/esta.svg)
 [![GitHub issues](https://img.shields.io/github/issues/kaizoku-oh/firestore)](https://github.com/kaizoku-oh/firestore/issues)
 ![GitHub top language](https://img.shields.io/github/languages/top/kaizoku-oh/firestore)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/kaizoku-oh/firestore/blob/main/LICENSE)
