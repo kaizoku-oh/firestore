@@ -30,16 +30,13 @@ $ cd components
 $ git clone https://github.com/kaizoku-oh/firestore.git
 ```
 5. Under your project include directory create a new file called firestore_config.h
-6. Add your Firebase project ID and API key in the firestore_config.h file
-
-Before using the example code you need to configure the firestore component in firestore_config.h which needs to contain your firestore component configuration like project id, api key... Feel free to change the other configs, but the most important ones are the following:
-
+6. Add your Firebase project ID and API key in the firestore_config.h file like the following:
 ``` C
 #define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
 #define FIRESTORE_FIREBASE_API_KEY "PUT_YOUR_FIREBASE_API_KEY_HERE"
 ```
 
-**Don't know where to get your API key?** easy:
+**Don't know where to get your API key?** Easy:
 * Open you firebase console
 * Go to Project settings 
 * Scroll down to Firebase SDK snippet
