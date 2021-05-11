@@ -36,14 +36,12 @@ $ git clone https://github.com/kaizoku-oh/firestore.git
 #define FIRESTORE_FIREBASE_API_KEY "PUT_YOUR_FIREBASE_API_KEY_HERE"
 ```
 Finally you prject directory tree should look similar like the following:
-``` bash
+```
 my-project/
 ├── CMakeLists.txt
 ├── components
-|   |
 │   └── firestore
 ├── include
-|   |
 │   └── firestore_config.h
 ├── lib
 ├── platformio.ini
