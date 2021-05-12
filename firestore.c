@@ -91,6 +91,8 @@ firestore_err_t firestore_get_collection(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
+  stCtx.u32HttpBodyLen = 0;
+  esp_http_client_cleanup(stCtx.pstHttpClient);
   return eRetVal;
 }
 
@@ -151,6 +153,8 @@ firestore_err_t firestore_get_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
+  stCtx.u32HttpBodyLen = 0;
+  esp_http_client_cleanup(stCtx.pstHttpClient);
   return eRetVal;
 }
 
@@ -213,6 +217,8 @@ firestore_err_t firestore_add_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
+  stCtx.u32HttpBodyLen = 0;
+  esp_http_client_cleanup(stCtx.pstHttpClient);
   return eRetVal;
 }
 
@@ -275,6 +281,8 @@ firestore_err_t firestore_update_document(char *pcCollectionId,
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
+  stCtx.u32HttpBodyLen = 0;
+  esp_http_client_cleanup(stCtx.pstHttpClient);
   return eRetVal;
 }
 
@@ -331,6 +339,8 @@ firestore_err_t firestore_delete_document(char *pcCollectionId, char *pcDocument
   {
     eRetVal = FIRESTORE_ERR_ARG;
   }
+  stCtx.u32HttpBodyLen = 0;
+  esp_http_client_cleanup(stCtx.pstHttpClient);
   return eRetVal;
 }
 
