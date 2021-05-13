@@ -1,4 +1,4 @@
-#include <string.h>
+#include <stdio.h>
 #include <esp_log.h>
 
 #include <freertos/FreeRTOS.h>
@@ -7,9 +7,15 @@
 #include "firestore.h"
 #include "app_wifi.h"
 
-static void _firestore_task(void *);
+static void _app_main_firestore_task(void *);
+static void _app_main_update_document(void);
 
 #define APP_MAIN_TAG                             "APP_MAIN"
+
+#define APP_MAIN_FIRESTORE_TASK_STACK_SIZE       10240
+#define APP_MAIN_FIRESTORE_TASK_PRIORITY         4
+#define APP_MAIN_FIRESTORE_PERIOD_MS             1000
+
 #define APP_MAIN_FIRESTORE_DOC_MAX_SIZE          64
 #define APP_MAIN_FIRESTORE_COLLECTION_ID         "devices"
 #define APP_MAIN_FIRESTORE_DOCUMENT_ID           "esp32"
@@ -24,7 +30,31 @@ static void _firestore_task(void *);
 static uint32_t u32DocLength;
 static char tcDoc[APP_MAIN_FIRESTORE_DOC_MAX_SIZE];
 
-void update_document(void)
+void app_main(void)
+{
+  /* Block until connected to WiFi */
+  app_wifi_init();
+  app_wifi_wait();
+
+  xTaskCreate(_app_main_firestore_task,
+              "firestore",
+              APP_MAIN_FIRESTORE_TASK_STACK_SIZE,
+              NULL,
+              APP_MAIN_FIRESTORE_TASK_PRIORITY,
+              NULL);
+}
+
+static void _app_main_firestore_task(void *pvParameter)
+{
+  firestore_init();
+  while(1)
+  {
+    _app_main_update_document();
+    vTaskDelay(APP_MAIN_FIRESTORE_PERIOD_MS / portTICK_PERIOD_MS);
+  }
+}
+
+static void _app_main_update_document(void)
 {
   /* Format json document */
   u32DocLength = snprintf(tcDoc,
@@ -51,23 +81,4 @@ void update_document(void)
   {
     ESP_LOGE(APP_MAIN_TAG, "Couldn't format document");
   }
-}
-
-static void _firestore_task(void *pvParameter)
-{
-  firestore_init();
-  while(1)
-  {
-    update_document();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-}
-
-void app_main()
-{
-  /* Block until connected to WiFi */
-  app_wifi_init();
-  app_wifi_wait();
-
-  xTaskCreate(_firestore_task, "firestore", 10240, NULL, 4, NULL);
 }
