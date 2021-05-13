@@ -1,8 +1,6 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#include "firestore_config.h"
-
 #ifndef FIRESTORE_HOSTNAME
 #define FIRESTORE_HOSTNAME                       "firestore.googleapis.com"
 #endif /* FIRESTORE_HOSTNAME */

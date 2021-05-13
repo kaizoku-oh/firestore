@@ -1,6 +1,8 @@
-# Firestore ESP-IDF component
-
-This project is an esp-idf component for Cloud Firestore NoSQL database as a service.
+<p align="center">
+  <!-- <img src="https://raw.githubusercontent.com/kaizoku-oh/firestore/config/docs/images/firebase.gif" width=50% height=50%> -->
+  <img src="https://raw.githubusercontent.com/kaizoku-oh/firestore/0fc5940cf3f8b280a7cfea44766415506bfb3697/docs/images/firebase-logo.svg" width=20% height=20%>
+  <h1 align="center">ESP-IDF Component for Cloud Firestore</h1>
+</p>
 
 <!-- ![Firestore logo](https://github.com/kaizoku-oh/firestore/blob/main/docs/image/logo.png) -->
 <!-- ![](https://github.com/<OWNER>/<REPOSITORY>/workflows/<WORKFLOW_NAME>/badge.svg) -->
@@ -29,45 +31,46 @@ To use this component you need ESP-IDF installed on your machine, see espressif 
 $ cd components
 $ git clone https://github.com/kaizoku-oh/firestore.git
 ```
-5. Under your project include directory create a new file called **firestore_config.h**
-6. Add your Firebase project ID and API key in the **firestore_config.h** file like the following:
-``` C
-#define FIRESTORE_FIREBASE_PROJECT_ID "PUT_YOUR_FIREBASE_PROJECT_ID_HERE"
-#define FIRESTORE_FIREBASE_API_KEY "PUT_YOUR_FIREBASE_API_KEY_HERE"
-```
-7. Add the following build flags in your **platformio.ini** file and change WIFI_SSID and WIFI_PASS values by your own WiFi SSID and password respectively:
-``` INI
-build_flags =
-  ; Add include directory to compiler path
-  '-Iinclude'
-  ; WiFi SSID defined in compile time
-  '-DWIFI_SSID="TYPE_YOUR_WIFI_SSID_HERE"'
-  ; WiFi password defined in compile time
-  '-DWIFI_PASS="TYPE_YOUR_WIFI_PASSWORD_HERE"'
+5. To avoid exposing sensitive data in the code we'll store them in environment variables that'll be when building the project.
+
+Add your WiFi SSID, WiFi password, Firebase project ID, Firebase API key as environment variables like the following:
+### Window (Powershell)
+``` powershell
+# Set local environment variables
+> $env:WIFI_SSID = '"TYPE_YOUR_WIFI_SSID_HERE"'
+> $env:WIFI_PASS = '"TYPE_YOUR_WIFI_PASSWORD_HERE"'
+> $env:FIRESTORE_FIREBASE_PROJECT_ID = '"TYPE_YOUR_FIREBASE_PROJECT_ID_HERE"'
+> $env:FIRESTORE_FIREBASE_API_KEY = '"TYPE_YOUR_FIREBASE_API_KEY_HERE"'
+
+# OPTIONAL: To read and verify the values of the variables that you just set:
+> Get-ChildItem Env:WIFI_SSID
+> Get-ChildItem Env:WIFI_PASS
+> Get-ChildItem Env:FIRESTORE_FIREBASE_PROJECT_ID
+> Get-ChildItem Env:FIRESTORE_FIREBASE_API_KEY
 ```
 
-##### Finally you project directory tree should look similar like the following:
+### Linux (Bash)
+``` bash
+# Set local environment variables
+$ export WIFI_SSID='"TYPE_YOUR_WIFI_SSID_HERE"'
+$ export WIFI_PASS='"TYPE_YOUR_WIFI_PASS_HERE"'
+$ export FIRESTORE_FIREBASE_PROJECT_ID='"TYPE_YOUR_FIREBASE_PROJECT_ID_HERE"'
+$ export FIRESTORE_FIREBASE_API_KEY='"TYPE_YOUR_FIREBASE_PROJECT_ID_HERE"'
+
+# OPTIONAL: To read and verify the values of the variables that you just set:
+$ echo $WIFI_SSID
+$ echo $WIFI_PASS
+$ echo $FIRESTORE_FIREBASE_PROJECT_ID
+$ echo $FIRESTORE_FIREBASE_API_KEY
 ```
-my-project/
-├── CMakeLists.txt
-├── components
-│   └── firestore
-├── include
-│   └── firestore_config.h
-├── lib
-├── platformio.ini
-├── sdkconfig
-├── src
-│   ├── CMakeLists.txt
-│   └── main.c
-└── test
-```
-**Don't know where to get your API key?** Easy:
-* Open you firebase console
+
+## Don't know where to get your Project ID and API key? Easy:
+* Open you [firebase console](https://console.firebase.google.com)
 * Go to Project settings 
-* Scroll down to Firebase SDK snippet
-* Select the Config option and you'll be presented with something like this:
+* Scroll down to **SDK setup and configuration**
+* Select the **Config** option and you'll be presented with something like this:
 
+From there you can copy your **projectId** and **apiKey**.
 ``` Javascript
 const firebaseConfig = {
   apiKey: "YOUR_FIRESTORE_FIREBASE_API_KEY",
@@ -82,7 +85,7 @@ const firebaseConfig = {
 
 ## TODO
 
-* Optimize the http code
+* Refactor code and remove repeated parts
 * Add doxygen comments
 * Add anonymous authentication
 * Add CI/CD
