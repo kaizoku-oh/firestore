@@ -5,15 +5,15 @@
 #include <freertos/task.h>
 
 #include "firestore.h"
-#include "wifi_utils.h"
+#include "app_wifi.h"
 
 static void _firestore_task(void *);
 
-#define TAG                                      "APP_MAIN"
-#define FIRESTORE_DOC_MAX_SIZE                   64
-#define FIRESTORE_COLLECTION_ID                  "devices"
-#define FIRESTORE_DOCUMENT_ID                    "esp32"
-#define FIRESTORE_DOCUMENT_EXAMPLE               "{"                           \
+#define APP_MAIN_TAG                             "APP_MAIN"
+#define APP_MAIN_FIRESTORE_DOC_MAX_SIZE          64
+#define APP_MAIN_FIRESTORE_COLLECTION_ID         "devices"
+#define APP_MAIN_FIRESTORE_DOCUMENT_ID           "esp32"
+#define APP_MAIN_FIRESTORE_DOCUMENT_EXAMPLE      "{"                           \
                                                    "\"fields\": {"             \
                                                        "\"random\": {"         \
                                                        "\"integerValue\": 158" \
@@ -22,7 +22,7 @@ static void _firestore_task(void *);
                                                  "}"
 
 static uint32_t u32DocLength;
-static char tcDoc[FIRESTORE_DOC_MAX_SIZE];
+static char tcDoc[APP_MAIN_FIRESTORE_DOC_MAX_SIZE];
 
 void update_document(void)
 {
@@ -33,23 +33,23 @@ void update_document(void)
                           rand());
   if(u32DocLength > 0)
   {
-    if(FIRESTORE_OK == firestore_update_document(FIRESTORE_COLLECTION_ID,
-                                                 FIRESTORE_DOCUMENT_ID,
+    if(FIRESTORE_OK == firestore_update_document(APP_MAIN_FIRESTORE_COLLECTION_ID,
+                                                 APP_MAIN_FIRESTORE_DOCUMENT_ID,
                                                  tcDoc,
                                                  &u32DocLength))
     {
-      ESP_LOGI(TAG, "Document updated successfully");
-      ESP_LOGI(TAG, "Updated document length: %d", u32DocLength);
-      ESP_LOGI(TAG, "Updated document content:\r\n%.*s", u32DocLength, tcDoc);
+      ESP_LOGI(APP_MAIN_TAG, "Document updated successfully");
+      ESP_LOGI(APP_MAIN_TAG, "Updated document length: %d", u32DocLength);
+      ESP_LOGI(APP_MAIN_TAG, "Updated document content:\r\n%.*s", u32DocLength, tcDoc);
     }
     else
     {
-      ESP_LOGE(TAG, "Couldn't update document");
+      ESP_LOGE(APP_MAIN_TAG, "Couldn't update document");
     }
   }
   else
   {
-    ESP_LOGE(TAG, "Couldn't format document");
+    ESP_LOGE(APP_MAIN_TAG, "Couldn't format document");
   }
 }
 
@@ -66,8 +66,8 @@ static void _firestore_task(void *pvParameter)
 void app_main()
 {
   /* Block until connected to WiFi */
-  wifi_initialise();
-  wifi_wait_connected();
+  app_wifi_init();
+  app_wifi_wait();
 
   xTaskCreate(_firestore_task, "firestore", 10240, NULL, 4, NULL);
 }

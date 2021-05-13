@@ -31,6 +31,12 @@ jobs:
 
     # Build the firmware
     - name: Build Firmware
+      env:
+        # Pass secrets as environment variables
+        WIFI_SSID: ${{ secrets.WIFI_SSID }}
+        WIFI_PASS: ${{ secrets.WIFI_PASS }}
+        FIRESTORE_FIREBASE_PROJECT_ID: ${{ secrets.FIRESTORE_FIREBASE_PROJECT_ID }}
+        FIRESTORE_FIREBASE_API_KEY: ${{ secrets.FIRESTORE_FIREBASE_API_KEY }}
       run: |
         cd examples/firestore-crud
         pio run
