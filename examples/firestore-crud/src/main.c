@@ -1,116 +1,65 @@
 #include <string.h>
 #include <esp_log.h>
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+
 #include "firestore.h"
 #include "wifi_utils.h"
 
-#define TAG                                      "MAIN"
-#define NEW_DOCUMENT_CONTENT                     "{"                                                  \
-                                                   "\"fields\": {"                                    \
-                                                       "\"last_seen_connected\": {"                   \
-                                                       "\"timestampValue\": \"2021-11-13T20:44:30Z\"" \
-                                                     "},"                                             \
-                                                     "\"firmware_version\": {"                        \
-                                                       "\"stringValue\": \"v2.0.0\""                  \
-                                                     "},"                                             \
-                                                     "\"send_frequency\": {"                          \
-                                                       "\"integerValue\": \"6\""                      \
-                                                     "},"                                             \
-                                                     "\"device_id\": {"                               \
-                                                       "\"stringValue\": \"esp-32-device\""           \
-                                                     "},"                                             \
-                                                     "\"connection_status\": {"                       \
-                                                       "\"stringValue\": \"connected\""               \
-                                                     "}"                                              \
-                                                   "}"                                                \
+static void _firestore_task(void *);
+
+#define TAG                                      "APP_MAIN"
+#define FIRESTORE_DOC_MAX_SIZE                   64
+#define FIRESTORE_COLLECTION_ID                  "devices"
+#define FIRESTORE_DOCUMENT_ID                    "esp32"
+#define FIRESTORE_DOCUMENT_EXAMPLE               "{"                           \
+                                                   "\"fields\": {"             \
+                                                       "\"random\": {"         \
+                                                       "\"integerValue\": 158" \
+                                                     "},"                      \
+                                                   "}"                         \
                                                  "}"
 
-/* Get Collection */
-void get_collection(void)
-{
-  char *pcCollection;
-  uint32_t u32CollectionLen;
+static uint32_t u32DocLength;
+static char tcDoc[FIRESTORE_DOC_MAX_SIZE];
 
-  if(FIRESTORE_OK == firestore_get_collection("devices", &pcCollection, &u32CollectionLen))
-  {
-    ESP_LOGI(TAG, "Collection length: %d", u32CollectionLen);
-    ESP_LOGI(TAG, "Collection content:\r\n%.*s", u32CollectionLen, pcCollection);
-  }
-  else
-  {
-    ESP_LOGE(TAG, "Couldn't get collection");
-  }
-}
-
-/* Get Document */
-void get_document(void)
-{
-  char *pcDocument;
-  uint32_t u32DocumentLen;
-
-  if(FIRESTORE_OK == firestore_get_document("devices", "new_device_id", &pcDocument, &u32DocumentLen))
-  {
-    ESP_LOGI(TAG, "Document length: %d", u32DocumentLen);
-    ESP_LOGI(TAG, "Document content:\r\n%.*s", u32DocumentLen, pcDocument);
-  }
-  else
-  {
-    ESP_LOGE(TAG, "Couldn't get document");
-  }
-}
-
-/* Update Document */
 void update_document(void)
 {
-  char tcDocument[320];
-  uint32_t u32DocumentLen;
-
-  memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
-  if(FIRESTORE_OK == firestore_update_document("devices",
-                                               "new_device_id",
-                                               tcDocument,
-                                               &u32DocumentLen))
+  /* Format json document */
+  u32DocLength = snprintf(tcDoc,
+                          sizeof(tcDoc),
+                          "{\"fields\":{\"random\":{\"integerValue\":%d}}}",
+                          rand());
+  if(u32DocLength > 0)
   {
-    ESP_LOGI(TAG, "Updated document length: %d", u32DocumentLen);
-    ESP_LOGI(TAG, "Updated document content:\r\n%.*s", u32DocumentLen, tcDocument);
+    if(FIRESTORE_OK == firestore_update_document(FIRESTORE_COLLECTION_ID,
+                                                 FIRESTORE_DOCUMENT_ID,
+                                                 tcDoc,
+                                                 &u32DocLength))
+    {
+      ESP_LOGI(TAG, "Document updated successfully");
+      ESP_LOGI(TAG, "Updated document length: %d", u32DocLength);
+      ESP_LOGI(TAG, "Updated document content:\r\n%.*s", u32DocLength, tcDoc);
+    }
+    else
+    {
+      ESP_LOGE(TAG, "Couldn't update document");
+    }
   }
   else
   {
-    ESP_LOGE(TAG, "Couldn't update document");
+    ESP_LOGE(TAG, "Couldn't format document");
   }
 }
 
-/* Add Document */
-void add_document(void)
+static void _firestore_task(void *pvParameter)
 {
-  char tcDocument[320];
-  uint32_t u32DocumentLen;
-
-  memcpy(tcDocument, NEW_DOCUMENT_CONTENT, sizeof(NEW_DOCUMENT_CONTENT));
-  if(FIRESTORE_OK == firestore_add_document("devices",
-                                            "new_device_id",
-                                            tcDocument,
-                                            &u32DocumentLen))
+  firestore_init();
+  while(1)
   {
-    ESP_LOGI(TAG, "Added document length: %d", u32DocumentLen);
-    ESP_LOGI(TAG, "Added document content:\r\n%.*s", u32DocumentLen, tcDocument);
-  }
-  else
-  {
-    ESP_LOGE(TAG, "Couldn't add document");
-  }
-}
-
-/* Delete Document */
-void delete_document(void)
-{
-  if(FIRESTORE_OK == firestore_delete_document("devices", "new_device_id"))
-  {
-    ESP_LOGI(TAG, "Document deleted successfully");
-  }
-  else
-  {
-    ESP_LOGE(TAG, "Couldn't delete document");
+    update_document();
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
 
@@ -120,10 +69,5 @@ void app_main()
   wifi_initialise();
   wifi_wait_connected();
 
-  firestore_init();
-  add_document();
-  // get_document();
-  // get_collection();
-  // update_document();
-  // delete_document();
+  xTaskCreate(_firestore_task, "firestore", 10240, NULL, 4, NULL);
 }
