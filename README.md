@@ -82,9 +82,14 @@ const firebaseConfig = {
   appId: "XXXXXXXXXXXXXXXXXXXXXX"
 };
 ```
+6. Finally you can **build** project, **upload** the firmware to the board and start a serial **monitor** all with a single combined command:
+``` bash
+$ pio run --target upload --target monitor
+```
 
 ## TODO
 
+* Add contribution guide
 * Refactor code and remove repeated parts
 * Add doxygen comments
 * Add anonymous authentication
